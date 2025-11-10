@@ -1,0 +1,39 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Build the app and release to the Google Play Store"
+  lane :deploy_beta do
+    # It's recommended to run fastlane via Bundler to lock gems:
+    #   bundle exec fastlane deploy_beta
+
+    # Build an Android App Bundle (AAB) and upload it to Google Play.
+    gradle(task: "bundleRelease")
+
+    # Upload the generated AAB to the beta track on the Google Play Store.
+    # The release bundle is typically located under:
+    # app/build/outputs/bundle/release/app-release.aab
+    upload_to_play_store(
+      aab: "./app/build/outputs/bundle/release/app-release.aab",
+      json_key: "./service-account.json",
+      track: "internal",
+      release_status: 'draft',
+    )
+
+    UI.success("Successfully uploaded the build to the beta track!")
+  end
+end
